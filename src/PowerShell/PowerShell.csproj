@@ -69,7 +69,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Authentication\Authentication.csproj" />
     <ProjectReference Include="..\Billing\Billing.csproj" />
     <ProjectReference Include="..\Subscription\Subscription.csproj" />
   </ItemGroup>
