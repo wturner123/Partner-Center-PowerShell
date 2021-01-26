@@ -8,7 +8,12 @@
     "PowerShell Core": {
       "commandName": "Executable",
       "executablePath": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
-      "commandLineArgs": "-NoProfile -NoExit -Command \"Import-Module .\\PartnerCenter.psd1\""
+      "commandLineArgs": "-NoProfile -NoExit -Command \"Import-Module .\\PartnerCenter.psd1 -Verbose\""
+    },
+    "PowerShell Core Az.Accounts": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "commandLineArgs": "-NoProfile -NoExit -Command \"Import-Module Az.Accounts -RequiredVersion 2.0.1; Import-Module .\\PartnerCenter.psd1 -Verbose\""
     }
   }
 }

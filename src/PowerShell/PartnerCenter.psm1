@@ -58,13 +58,19 @@ if($PSEdition -eq 'Core' -and (Test-Path $netCorePath -ErrorAction Ignore))
 {
     try
     {
-        $loadedAssemblies = ([System.AppDomain]::CurrentDomain.GetAssemblies() | %{New-Object -TypeName System.Reflection.AssemblyName -ArgumentList $_.FullName} )
+        $loadedAssemblies = ([System.AppDomain]::CurrentDomain.GetAssemblies() | ForEach-Object {New-Object -TypeName System.Reflection.AssemblyName -ArgumentList $_.FullName} )
         Get-ChildItem -ErrorAction Stop -Path $netCorePath -Filter "*.dll" | ForEach-Object {
             $assemblyName = ([System.Reflection.AssemblyName]::GetAssemblyName($_.FullName))
             $matches = ($loadedAssemblies | Where-Object {$_.Name -eq $assemblyName.Name})
             if (-not $matches)
             {
-                Add-Type -Path $_.FullName -ErrorAction Ignore | Out-Null
+                try
+                {
+                    Add-Type -Path $_.FullName -ErrorAction Ignore | Out-Null
+                }
+                catch {
+                    Write-Verbose $_
+                }
             }
         }
     }

@@ -32,7 +32,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.2.0" />
     <PackageReference Include="Microsoft.Graph.Beta" Version="0.19.0-preview" />
-    <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.6.0-preview" />
+    <!--<PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.16.2" />-->
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.6.0" />
     <PackageReference Include="PartnerCenter.DotNet" Version="1.15.6" />
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.0" PrivateAssets="All" />
@@ -65,14 +65,17 @@
   <ItemGroup>
     <PreLoadAssemblies Include="$(RepoSrc)lib\NetFxPreloadAssemblies\*.dll" />
     <PreLoadAssemblies Include="$(RepoSrc)lib\System.Security.Cryptography.ProtectedData.dll" />
+    <NetCoreAssemblies Include="$(RepoSrc)lib\NetCorePreloadAssemblies\*.dll" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Authentication\Authentication.csproj" />
     <ProjectReference Include="..\Billing\Billing.csproj" />
     <ProjectReference Include="..\Subscription\Subscription.csproj" />
   </ItemGroup>
 
   <Target Name="CopyFiles" AfterTargets="Build">
     <Copy SourceFiles="@(PreLoadAssemblies)" DestinationFolder="$(TargetDir)\PreloadAssemblies" />
+    <Copy SourceFiles="@(NetCoreAssemblies)" DestinationFolder="$(TargetDir)\NetCoreAssemblies" />
   </Target>
 </Project>

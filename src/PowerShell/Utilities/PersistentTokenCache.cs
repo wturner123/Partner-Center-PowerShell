@@ -71,7 +71,7 @@ namespace Microsoft.Store.PartnerCenter.PowerShell.Utilities
         /// <returns>The data from the token cache.</returns>
         public override byte[] GetCacheData()
         {
-            return GetMsalCacheStorage().ReadData();
+            return GetMsalCacheStorage().LoadUnencryptedTokenCache();
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Microsoft.Store.PartnerCenter.PowerShell.Utilities
         /// <param name="args">Arguments related to the cache item impacted</param>
         public override void AfterAccessNotification(TokenCacheNotificationArgs args)
         {
-            MsalCacheStorage cacheStorage = GetMsalCacheStorage();
+            MsalCacheHelper cacheStorage = GetMsalCacheStorage();
 
             args.AssertNotNull(nameof(args));
 
@@ -88,7 +88,7 @@ namespace Microsoft.Store.PartnerCenter.PowerShell.Utilities
             {
                 if (args.HasStateChanged)
                 {
-                    cacheStorage.WriteData(args.TokenCache.SerializeMsalV3());
+                    cacheStorage.SaveUnencryptedTokenCache(args.TokenCache.SerializeMsalV3());
                 }
             }
             catch (Exception)
@@ -98,9 +98,9 @@ namespace Microsoft.Store.PartnerCenter.PowerShell.Utilities
             }
             finally
             {
-                CrossPlatformLock localDispose = cacheLock;
-                cacheLock = null;
-                localDispose?.Dispose();
+                //CrossPlatformLock localDispose = cacheLock;
+                //cacheLock = null;
+                //localDispose?.Dispose();
             }
         }
 
@@ -110,16 +110,16 @@ namespace Microsoft.Store.PartnerCenter.PowerShell.Utilities
         /// <param name="args">Arguments related to the cache item impacted</param>
         public override void BeforeAccessNotification(TokenCacheNotificationArgs args)
         {
-            MsalCacheStorage cacheStorage = GetMsalCacheStorage();
+            MsalCacheHelper cacheStorage = GetMsalCacheStorage();
 
             args.AssertNotNull(nameof(args));
 
             try
             {
-                cacheLock = new CrossPlatformLock($"{CacheFilePath}.lockfile");
+                //cacheLock = new CrossPlatformLock($"{CacheFilePath}.lockfile");
 
-                cacheLock.CreateLockAsync().ConfigureAwait(false);
-                args.TokenCache.DeserializeMsalV3(cacheStorage.ReadData());
+                //cacheLock.CreateLockAsync().ConfigureAwait(false);
+                args.TokenCache.DeserializeMsalV3(cacheStorage.LoadUnencryptedTokenCache());
             }
             catch (Exception)
             {
@@ -143,7 +143,7 @@ namespace Microsoft.Store.PartnerCenter.PowerShell.Utilities
         /// Gets an aptly configured instance of the <see cref="MsalCacheStorage" /> class.
         /// </summary>
         /// <returns>An aptly configured instance of the <see cref="MsalCacheStorage" /> class.</returns>
-        private MsalCacheStorage GetMsalCacheStorage()
+        private MsalCacheHelper GetMsalCacheStorage()
         {
             StorageCreationPropertiesBuilder builder = new StorageCreationPropertiesBuilder(Path.GetFileName(CacheFilePath), Path.GetDirectoryName(CacheFilePath), ClientId);
 
@@ -155,7 +155,13 @@ namespace Microsoft.Store.PartnerCenter.PowerShell.Utilities
                 attribute1: new KeyValuePair<string, string>("MsalClientID", "Microsoft.Developer.IdentityService"),
                 attribute2: new KeyValuePair<string, string>("MsalClientVersion", "1.0.0.0"));
 
-            return MsalCacheStorage.Create(builder.Build(), new TraceSource("Partner Center PowerShell"));
+            //var cacheHelper = MsalCacheHelper.CreateAsync(builder).ConfigureAwait(false).GetAwaiter().GetResult();
+            //cacheHelper.VerifyPersistence();
+            //MsalCacheHelper = cacheHelper;
+
+            return MsalCacheHelper.CreateAsync(builder.Build(), new TraceSource("Partner Center PowerShell")).ConfigureAwait(false).GetAwaiter().GetResult();
+
+            //return MsalCacheStorage.Create(builder.Build(), new TraceSource("Partner Center PowerShell"));
         }
     }
 }
