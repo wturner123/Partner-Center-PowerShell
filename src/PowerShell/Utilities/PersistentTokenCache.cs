@@ -155,13 +155,7 @@ namespace Microsoft.Store.PartnerCenter.PowerShell.Utilities
                 attribute1: new KeyValuePair<string, string>("MsalClientID", "Microsoft.Developer.IdentityService"),
                 attribute2: new KeyValuePair<string, string>("MsalClientVersion", "1.0.0.0"));
 
-            //var cacheHelper = MsalCacheHelper.CreateAsync(builder).ConfigureAwait(false).GetAwaiter().GetResult();
-            //cacheHelper.VerifyPersistence();
-            //MsalCacheHelper = cacheHelper;
-
             return MsalCacheHelper.CreateAsync(builder.Build(), new TraceSource("Partner Center PowerShell")).ConfigureAwait(false).GetAwaiter().GetResult();
-
-            //return MsalCacheStorage.Create(builder.Build(), new TraceSource("Partner Center PowerShell"));
         }
     }
 }
